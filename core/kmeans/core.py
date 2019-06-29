@@ -18,7 +18,7 @@ class Cluster:
 
 class BaseProblemSolver:
 
-    def __init__(self, img_path, n_cluster, min_diff):
+    def __init__(self, n_cluster, img_path, min_diff):
         self.n_cluster = n_cluster
         self.img_path = img_path
         self.img_points = self._get_image_data()
