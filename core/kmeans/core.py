@@ -25,6 +25,7 @@ class BaseProblemSolver:
         self.clusters = [Cluster(center=p, points=[p]) for p in sample(self.img_points, self.n_cluster)]
         self.min_diff = min_diff
 
+
     def distance(self, p, q):
         pass
 
@@ -56,7 +57,7 @@ class BaseProblemSolver:
         self.img_dim = width * height
         image_points = []
         for count, color in img.getcolors(self.img_dim):
-            image_points += count * [color]
+            image_points += count * [Point(color)]
         return image_points
         # TODO IMPLEMENTAR AQUI, NAO DEVE MUDAR
 
@@ -66,7 +67,7 @@ class BaseProblemSolver:
 
 class EuclidianDistanceProblemSolver(BaseProblemSolver):
     def distance(self, p, q):
-        return sum(linalg(p.coordinates[i] - q.coordinates[i]) for i in range(self.img_dim))
+        return sum (linalg.norm(p.coordinates[i] - q.coordinates[i]) for i in range(len(p.coordinates)))
 
     def __init__(self, ncluster, img_path, mindif):
         super().__init__(ncluster, img_path, mindif)
