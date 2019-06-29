@@ -1,3 +1,4 @@
+from sys import float_info
 from PIL import Image
 from numpy import linalg
 
@@ -26,11 +27,11 @@ class BaseProblemSolver:
     def calculate_new_center(self, cluster):
         pass
 
-    def assign_points(self, cluster, points):
+    def formulate_new_clt_points(self):
         pass
 
     def single_fit_calculation(self):
-        iteration_clusters = self.assign_points()
+        iteration_clusters = self.formulate_new_clt_points()
         diff = 0
         self.a
         pass
@@ -65,6 +66,35 @@ class EuclidianDistanceProblemSolver(BaseProblemSolver):
 
 ########## AI PRA FAZER AS COISAS VISUAIS, MUDAR OUTRO ARQUIVO #######
 
+class DefaultSolver(EuclidianDistanceProblemSolver):
+    def __init__(self):
+        self.__super__()
+
+    def calculate_new_center(self, cluster):
+        rep_dim = len(self.img_points[0].coordinates)
+        points_val = [0.0] * rep_dim
+        for p in self.img_points:
+            for i in range(rep_dim):
+                points_val[i] += p.coordinates[i]
+            coordinates = [(v / self.img_dim) for v in points_val]
+            return Point(coordinates)
+
+    def formulate_new_clt_points(self):
+        clusters = [[] for _ in range(self.n_cluster)]
+        for p in self.img_points:
+            smallest_distance = float_info.max
+            for i in range(self.n_cluster):
+                distance = self.distance(p, self.clusters[i])
+                if distance < smallest_distance:
+                    smallest_distance = distance
+                    choosen_cluster = i
+            clusters[i].append(p)
+        return clusters
+
+    def is_fit_enough(self):
+        pass
+
+
 class Runner:
     def __init__(self, img_path):
         self.problem_solver = EuclidianDistanceProblemSolver()
@@ -72,3 +102,5 @@ class Runner:
     def run(self):
         while not self.problem_solver.is_fit_enough():
             self.problem_solver.single_fit_calculation()
+
+
