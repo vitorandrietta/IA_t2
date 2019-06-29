@@ -30,8 +30,9 @@ class BaseProblemSolver:
         pass
 
     def single_fit_calculation(self):
+        iteration_clusters = self.assign_points()
         diff = 0
-
+        self.a
         pass
         # PODEMOS IMPLEMENTAR AQUI, ACHO Q FIT NAO MUDAREMOS
 
