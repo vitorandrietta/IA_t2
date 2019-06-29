@@ -25,6 +25,7 @@ class BaseProblemSolver:
         self.clusters = [Cluster(center=p, points=[p]) for p in sample(self.img_points, self.n_clusters)]
         self.min_diff = min_diff
 
+
     def distance(self, p, q):
         pass
 
@@ -36,7 +37,6 @@ class BaseProblemSolver:
 
     def single_fit_calculation(self):
         gen_clusters = self.formulate_new_clt_points()
-        diff = 0
 
         for i in range(self.n_cluster):
             if gen_clusters[i]:
@@ -46,14 +46,13 @@ class BaseProblemSolver:
                 self.clusters[i] = new
                 diff = max(diff, self.distance(previous.center, new.center))
 
-                if diff < self.min_diff:
-                    break
+
 
         # PODEMOS IMPLEMENTAR AQUI, ACHO Q FIT NAO MUDAREMOS
 
     def is_fit_enough(self):
         return True
-        #### SABER SE DEVEMOS PARAR DE RE CLUSTERIZAR
+
 
     def _get_image_data(self):
         img = Image.open(self.img_path)
@@ -75,14 +74,14 @@ class EuclidianDistanceProblemSolver(BaseProblemSolver):
         return sum(linalg(p.coordinates[i] - q.coordinates[i]) for i in range(self.img_dim))
 
     def __init__(self, ncluster, img_path, mindif):
-        self.__super__(ncluster, img_path, mindif)
+        super().__init__(ncluster, img_path, mindif)
 
 
 ########## AI PRA FAZER AS COISAS VISUAIS, MUDAR OUTRO ARQUIVO #######
 
 class DefaultSolver(EuclidianDistanceProblemSolver):
     def __init__(self, ncluster, img_path, mindif):
-        self.__super__(ncluster, img_path, mindif)
+        super().__init__(ncluster, img_path, mindif)
 
     def calculate_new_center(self, cluster):
         rep_dim = len(self.img_points[0].coordinates)
