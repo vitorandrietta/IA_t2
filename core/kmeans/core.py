@@ -1,3 +1,4 @@
+from plot.cluster_graphic import PlotAlgoritmState
 from sys import float_info
 from PIL import Image
 from numpy import linalg
@@ -113,4 +114,5 @@ class Runner:
             pass
         self.problem_solver.clusters.sort(key=lambda c: len(c.points), reverse=True)
         rgbs = [map(int, c.center.coordinates) for c in self.problem_solver.clusters]
+        PlotAlgoritmState().plot(self.problem_solver.clusters)
         return list(map(util.rgb_to_hex, rgbs))
