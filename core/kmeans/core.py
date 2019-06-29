@@ -22,7 +22,7 @@ class BaseProblemSolver:
         self.n_cluster = n_cluster
         self.img_path = img_path
         self.img_points = self._get_image_data()
-        self.clusters = [Cluster(center=p, points=[p]) for p in sample(self.img_points, self.n_clusters)]
+        self.clusters = [Cluster(center=p, points=[p]) for p in sample(self.img_points, self.n_cluster)]
         self.min_diff = min_diff
 
     def distance(self, p, q):
@@ -91,7 +91,7 @@ class DefaultSolver(EuclidianDistanceProblemSolver):
     def formulate_new_clt_points(self):
         new_clusters = [[] for _ in range(self.n_cluster)]
         for point in self.img_points:
-            distances = [self.distance(point, c.center) for c in self.clusters[i]]
+            distances = [self.distance(point, c.center) for c in self.clusters]
             (_, min_dist_index) = distances.index(min(distances))
             new_clusters[min_dist_index] = point
 
@@ -103,7 +103,7 @@ class DefaultSolver(EuclidianDistanceProblemSolver):
 
 class Runner:
     def __init__(self, ncluster, img_path, mindif):
-        self.problem_solver = EuclidianDistanceProblemSolver(ncluster, img_path, mindif)
+        self.problem_solver = DefaultSolver(ncluster, img_path, mindif)
 
     def run(self):
         while not self.problem_solver.is_last_fit_calculation():
