@@ -44,15 +44,12 @@ class BaseProblemSolver:
                 center = self.calculate_new_center(gen_clusters[i])
                 new = Cluster(center, gen_clusters[i])
                 self.clusters[i] = new
-                diff = max(diff, self.distance(previous.center, new.center))
 
+                if self.is_fit_enough(previous, new):
+                    break
 
-
-        # PODEMOS IMPLEMENTAR AQUI, ACHO Q FIT NAO MUDAREMOS
-
-    def is_fit_enough(self):
-        return True
-
+    def is_fit_enough(self, previous, new):
+        return self.distance(previous.center, new.center) < self.min_diff
 
     def _get_image_data(self):
         img = Image.open(self.img_path)
