@@ -3,6 +3,7 @@ from PIL import Image
 from numpy import linalg
 from random import sample
 from ..helper import util
+import math
 
 
 class Point:
@@ -67,7 +68,7 @@ class BaseProblemSolver:
 
 class EuclidianDistanceProblemSolver(BaseProblemSolver):
     def distance(self, p, q):
-        return sum (linalg.norm(p.coordinates[i] - q.coordinates[i]) for i in range(len(p.coordinates)))
+        return math.sqrt(sum([ (p.coordinates[i] - q.coordinates[i]) ** 2 for i in range(len(p.coordinates)) ]))
 
     def __init__(self, ncluster, img_path, mindif):
         super().__init__(ncluster, img_path, mindif)
@@ -93,8 +94,8 @@ class DefaultSolver(EuclidianDistanceProblemSolver):
         new_clusters = [[] for _ in range(self.n_cluster)]
         for point in self.img_points:
             distances = [self.distance(point, c.center) for c in self.clusters]
-            (_, min_dist_index) = distances.index(min(distances))
-            new_clusters[min_dist_index] = point
+            min_dist_index = distances.index(min(distances))
+            new_clusters[min_dist_index].append(point)
 
         return new_clusters
 
