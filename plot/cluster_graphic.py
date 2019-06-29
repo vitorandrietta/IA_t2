@@ -4,24 +4,18 @@ from core.kmeans.core import *
 import numpy as np
 import matplotlib.pyplot as plt
 
+def rgb_to_hex(rgb):
+	return '#%s' % ''.join(('%02x' % p for p in rgb))
+
 class PlotAlgoritmState:
 
 	def plot(self, clusters):
 		fig = plt.figure()
-		ax = plt.axes(projection="3d")
-
-		x_points = []
-		y_points = []
-		z_points = []
+		ax = fig.add_subplot(111, projection='3d')
 
 		for c in clusters:
-			x_points.extend([ p.coordinates[0] for p in c.points])
-			y_points.extend([ p.coordinates[1] for p in c.points])
-			z_points.extend([ p.coordinates[2] for p in c.points])
+			for p in c.points:
+				(x, y, z) = p.coordinates
+				ax.scatter(x, y, z, color=rgb_to_hex(map(int, c.center.coordinates)))
 
-		x_points = np.array(x_points)
-		y_points = np.array(y_points)
-		z_points = np.array(z_points)
-
-		ax.scatter3D(x_points, y_points, z_points, c=z_points, cmap='hsv')
 		plt.show()
