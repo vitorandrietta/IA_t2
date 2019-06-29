@@ -53,6 +53,7 @@ class BaseProblemSolver:
 
     def _get_image_data(self):
         img = Image.open(self.img_path)
+        img.thumbnail((270, 480))
         img = img.convert("RGB")
         width, height = img.size
         self.img_dim = width * height
