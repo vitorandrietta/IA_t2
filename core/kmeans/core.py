@@ -74,15 +74,15 @@ class EuclidianDistanceProblemSolver(BaseProblemSolver):
     def distance(self, p, q):
         return sum(linalg(p.coordinates[i] - q.coordinates[i]) for i in range(self.img_dim))
 
-    def __init__(self):
-        self.__super__()
+    def __init__(self, ncluster, img_path, mindif):
+        self.__super__(ncluster, img_path, mindif)
 
 
 ########## AI PRA FAZER AS COISAS VISUAIS, MUDAR OUTRO ARQUIVO #######
 
 class DefaultSolver(EuclidianDistanceProblemSolver):
-    def __init__(self):
-        self.__super__()
+    def __init__(self, ncluster, img_path, mindif):
+        self.__super__(ncluster, img_path, mindif)
 
     def calculate_new_center(self, cluster):
         rep_dim = len(self.img_points[0].coordinates)
@@ -97,7 +97,7 @@ class DefaultSolver(EuclidianDistanceProblemSolver):
     def formulate_new_clt_points(self):
         new_clusters = [[] for _ in range(self.n_cluster)]
         for point in self.img_points:
-            distances = [ self.distance(point, c.center) for c in self.clusters[i] ]
+            distances = [self.distance(point, c.center) for c in self.clusters[i]]
             (_, min_dist_index) = distances.index(min(distances))
             new_clusters[min_dist_index] = point
 
@@ -108,8 +108,8 @@ class DefaultSolver(EuclidianDistanceProblemSolver):
 
 
 class Runner:
-    def __init__(self, img_path):
-        self.problem_solver = EuclidianDistanceProblemSolver()
+    def __init__(self, ncluster, img_path, mindif):
+        self.problem_solver = EuclidianDistanceProblemSolver(ncluster, img_path, mindif)
 
     def run(self):
         while not self.problem_solver.is_fit_enough():
