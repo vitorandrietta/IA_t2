@@ -1,6 +1,8 @@
 from sys import float_info
 from PIL import Image
 from numpy import linalg
+from random import sample
+from ..helper import util
 
 
 class Point:
@@ -15,11 +17,13 @@ class Cluster:
 
 
 class BaseProblemSolver:
-    def __init__(self, img_path, n_cluster):
+
+    def __init__(self, img_path, n_cluster, min_diff):
         self.n_cluster = n_cluster
         self.img_path = img_path
-        self.clusters = [[] for _ in range(n_cluster)]
         self.img_points = self._get_image_data()
+        self.clusters = [Cluster(center=p, points=[p]) for p in sample(self.img_points, self.n_clusters)]
+        self.min_diff = min_diff
 
     def distance(self, p, q):
         pass
@@ -31,10 +35,20 @@ class BaseProblemSolver:
         pass
 
     def single_fit_calculation(self):
-        iteration_clusters = self.formulate_new_clt_points()
+        gen_clusters = self.formulate_new_clt_points()
         diff = 0
-        self.a
-        pass
+
+        for i in range(self.n_cluster):
+            if gen_clusters[i]:
+                previous = self.clusters[i]
+                center = self.calculate_new_center(gen_clusters[i])
+                new = Cluster(center, gen_clusters[i])
+                self.clusters[i] = new
+                diff = max(diff, self.distance(previous.center, new.center))
+
+                if diff < self.min_diff:
+                    break
+
         # PODEMOS IMPLEMENTAR AQUI, ACHO Q FIT NAO MUDAREMOS
 
     def is_fit_enough(self):
@@ -102,5 +116,6 @@ class Runner:
     def run(self):
         while not self.problem_solver.is_fit_enough():
             self.problem_solver.single_fit_calculation()
-
-
+        self.problem_solver.clusters.sort(key=lambda c: len(c.points), reverse=True)
+        rgbs = [map(int, c.center.coordinates) for c in self.problem_solver.clusters]
+        return list(map(util.rgb_to_hex, rgbs))
