@@ -90,20 +90,18 @@ class DefaultSolver(EuclidianDistanceProblemSolver):
         for p in self.img_points:
             for i in range(rep_dim):
                 points_val[i] += p.coordinates[i]
-            coordinates = [(v / self.img_dim) for v in points_val]
-            return Point(coordinates)
+
+        coordinates = [(v / self.img_dim) for v in points_val]
+        return Point(coordinates)
 
     def formulate_new_clt_points(self):
-        clusters = [[] for _ in range(self.n_cluster)]
-        for p in self.img_points:
-            smallest_distance = float_info.max
-            for i in range(self.n_cluster):
-                distance = self.distance(p, self.clusters[i])
-                if distance < smallest_distance:
-                    smallest_distance = distance
-                    choosen_cluster = i
-            clusters[i].append(p)
-        return clusters
+        new_clusters = [[] for _ in range(self.n_cluster)]
+        for point in self.img_points:
+            distances = [ self.distance(point, c.center) for c in self.clusters[i] ]
+            (_, min_dist_index) = distances.index(min(distances))
+            new_clusters[min_dist_index] = point
+
+        return new_clusters
 
     def is_fit_enough(self):
         pass
