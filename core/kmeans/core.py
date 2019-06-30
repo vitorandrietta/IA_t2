@@ -51,7 +51,6 @@ class BaseProblemSolver:
 
     def _get_image_data(self):
         img = Image.open(self.img_path)
-        # img.thumbnail((270, 480))
         img = img.convert("RGB")
         width, height = img.size
         self.img_dim = width * height
@@ -115,6 +114,26 @@ class DefaultSolver(EuclidianDistanceProblemSolver):
     def is_fit_enough(self):
         pass
 
+class HSVProblemSolver(DefaultSolver):
+    def get_colors(self):
+        img = Image.open(self.img_path)
+        img = img.convert("HSV")
+        width, height = img.size
+        self.img_dim = width * height
+        image_points = []
+        for count, color in img.getcolors(self.img_dim):
+            image_points += count * [Point(color)]
+        return image_points
+
+
+    def distance(self, p, q):
+        (h1, s1, v1) = p.coordinates
+        (h2, s2, v2) = q.coordinates
+        dh = min(abs(h2-h1), 360-abs(h2-h1)) / 180.0
+        ds = abs(s2-s1)
+        dv = abs(v2-v1) / 255.0
+        return math.sqrt(dh ** 2 + ds ** 2 + dv ** 2)
+
 class Runner:
     def __init__(self, ncluster, img_path, mindif):
         self.problem_solver = DefaultSolver(ncluster, img_path, mindif)
@@ -132,5 +151,4 @@ class Runner:
 
         self.problem_solver.print_stats(list(centroid_colors))
         self.problem_solver.clusters.sort(key=lambda c: len(c.points), reverse=True)
-        # PlotAlgoritmState().plot(self.problem_solver.clusters)
         return list(centroid_colors)
