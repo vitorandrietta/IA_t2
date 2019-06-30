@@ -62,6 +62,18 @@ class BaseProblemSolver:
     def get_colors(self):
         pass
 
+    def print_stats(self):
+        print('CLUSTERS SIZE AND CENTER...')
+        for c in self.clusters:
+            print(c.center.coordinates, ' : ', len(c.points))
+
+        print('\n\n\n')
+        print('GREATEST DISTANCE TO CENTER...')
+        for c in self.clusters:
+            distances = [self.distance(point, c.center) for point in c.points]
+            dist = distances.index(max(distances))
+            print(c.center.coordinates, ' : ', dist)
+
 class EuclidianDistanceProblemSolver(BaseProblemSolver):
     def distance(self, p, q):
         return math.sqrt(sum([(p.coordinates[i] - q.coordinates[i]) ** 2 for i in range(len(p.coordinates))]))
@@ -110,6 +122,7 @@ class Runner:
             if self.problem_solver.is_last_fit_calculation():
                 break
 
+        self.problem_solver.print_stats()
         self.problem_solver.clusters.sort(key=lambda c: len(c.points), reverse=True)
         # PlotAlgoritmState().plot(self.problem_solver.clusters)
         return list(centroid_colors)
