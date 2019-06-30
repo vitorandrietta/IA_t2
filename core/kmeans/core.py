@@ -39,16 +39,17 @@ class BaseProblemSolver:
 
     def is_last_fit_calculation(self):
         gen_clusters = self.formulate_new_clt_points()
-
+        diff = 0
         for i in range(self.n_cluster):
             if gen_clusters[i]:
                 previous = self.clusters[i]
                 center = self.calculate_new_center(gen_clusters[i])
                 new = Cluster(center, gen_clusters[i])
                 self.clusters[i] = new
+                diff = max(diff, self.distance(previous, new.center))
 
-                if self.distance(previous.center, new.center) < self.min_diff:
-                    return True
+        if diff < self.min_diff:
+            return True
 
         return False
 
@@ -85,11 +86,11 @@ class DefaultSolver(EuclidianDistanceProblemSolver):
     def calculate_new_center(self, cluster):
         rep_dim = len(self.img_points[0].coordinates)
         points_val = [0.0] * rep_dim
-        for p in self.img_points:
+        for p in cluster:
             for i in range(rep_dim):
                 points_val[i] += p.coordinates[i]
 
-        coordinates = [(v / self.img_dim) for v in points_val]
+        coordinates = [(v / len(cluster)) for v in points_val]
         return Point(coordinates)
 
     def formulate_new_clt_points(self):
