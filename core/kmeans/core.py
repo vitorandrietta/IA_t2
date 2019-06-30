@@ -46,7 +46,7 @@ class BaseProblemSolver:
                 center = self.calculate_new_center(gen_clusters[i])
                 new = Cluster(center, gen_clusters[i])
                 self.clusters[i] = new
-                diff = max(diff, self.distance(previous, new.center))
+                diff = max(diff, self.distance(previous.center, new.center))
 
         if diff < self.min_diff:
             return True
