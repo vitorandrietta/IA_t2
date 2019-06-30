@@ -6,7 +6,8 @@ from numpy import linalg
 from random import sample
 from ..helper import util
 import math
-
+from statistic.radar import radar_chart
+import pandas as pd
 
 class Point:
     def __init__(self, coordinates):
@@ -62,17 +63,24 @@ class BaseProblemSolver:
     def get_colors(self):
         pass
 
-    def print_stats(self):
-        print('CLUSTERS SIZE AND CENTER...')
-        for c in self.clusters:
+    def print_stats(self, rgbs):
+        df = { 'group': ['A'] }
+        for (i, c) in enumerate(self.clusters):
             print(c.center.coordinates, ' : ', len(c.points))
+            df[rgbs[i]] = len(c.points)
 
-        print('\n\n\n')
-        print('GREATEST DISTANCE TO CENTER...')
-        for c in self.clusters:
+        df = pd.DataFrame(df)
+        radar_chart(df, 'Número de elementos por cluster', 'num-kinvo.png')
+
+        df = { 'group': ['A'] }
+        for (i, c) in enumerate(self.clusters):
             distances = [self.distance(point, c.center) for point in c.points]
             dist = distances.index(max(distances))
             print(c.center.coordinates, ' : ', dist)
+            df[rgbs[i]] = [dist]
+
+        df = pd.DataFrame(df)
+        radar_chart(df, 'Maior distância dentro do cluster', 'dist-kinvo.png')
 
 class EuclidianDistanceProblemSolver(BaseProblemSolver):
     def distance(self, p, q):
@@ -122,7 +130,7 @@ class Runner:
             if self.problem_solver.is_last_fit_calculation():
                 break
 
-        self.problem_solver.print_stats()
+        self.problem_solver.print_stats(list(centroid_colors))
         self.problem_solver.clusters.sort(key=lambda c: len(c.points), reverse=True)
         # PlotAlgoritmState().plot(self.problem_solver.clusters)
         return list(centroid_colors)
