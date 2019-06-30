@@ -50,11 +50,11 @@ class BaseProblemSolver:
                 if self.distance(previous.center, new.center) < self.min_diff:
                     return True
 
-            return False
+        return False
 
     def _get_image_data(self):
         img = Image.open(self.img_path)
-        img.thumbnail((270, 480))
+        # img.thumbnail((270, 480))
         img = img.convert("RGB")
         width, height = img.size
         self.img_dim = width * height
@@ -112,11 +112,13 @@ class Runner:
     def run(self):
         iter = 1
         centroid_colors = None
-        while not self.problem_solver.is_last_fit_calculation():
+        while True:
             rgbs = [map(int, c.center.coordinates) for c in self.problem_solver.clusters]
             centroid_colors = list(map(util.rgb_to_hex, rgbs))
             PalletExtractor.plot_pallet(centroid_colors, iter)
             iter += 1
+            if self.problem_solver.is_last_fit_calculation():
+                break
 
         self.problem_solver.clusters.sort(key=lambda c: len(c.points), reverse=True)
         # PlotAlgoritmState().plot(self.problem_solver.clusters)
