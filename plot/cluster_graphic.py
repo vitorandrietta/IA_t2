@@ -17,5 +17,4 @@ class PlotAlgoritmState:
 			for p in c.points:
 				(x, y, z) = p.coordinates
 				ax.scatter(x, y, z, color=rgb_to_hex(map(int, c.center.coordinates)))
-
 		plt.show()

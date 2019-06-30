@@ -1,3 +1,4 @@
+from plot.iteration_pallet import PalletExtractor
 from plot.cluster_graphic import PlotAlgoritmState
 from sys import float_info
 from PIL import Image
@@ -26,7 +27,6 @@ class BaseProblemSolver:
         self.img_points = self._get_image_data()
         self.clusters = [Cluster(center=p, points=[p]) for p in sample(self.img_points, self.n_cluster)]
         self.min_diff = min_diff
-
 
     def distance(self, p, q):
         pass
@@ -70,7 +70,7 @@ class BaseProblemSolver:
 
 class EuclidianDistanceProblemSolver(BaseProblemSolver):
     def distance(self, p, q):
-        return math.sqrt(sum([ (p.coordinates[i] - q.coordinates[i]) ** 2 for i in range(len(p.coordinates)) ]))
+        return math.sqrt(sum([(p.coordinates[i] - q.coordinates[i]) ** 2 for i in range(len(p.coordinates))]))
 
     def __init__(self, ncluster, img_path, mindif):
         super().__init__(ncluster, img_path, mindif)
@@ -110,9 +110,14 @@ class Runner:
         self.problem_solver = DefaultSolver(ncluster, img_path, mindif)
 
     def run(self):
+        iter = 1
+        centroid_colors = None
         while not self.problem_solver.is_last_fit_calculation():
-            pass
+            rgbs = [map(int, c.center.coordinates) for c in self.problem_solver.clusters]
+            centroid_colors = list(map(util.rgb_to_hex, rgbs))
+            PalletExtractor.plot_pallet(centroid_colors, iter)
+            iter += 1
+
         self.problem_solver.clusters.sort(key=lambda c: len(c.points), reverse=True)
-        rgbs = [map(int, c.center.coordinates) for c in self.problem_solver.clusters]
-        PlotAlgoritmState().plot(self.problem_solver.clusters)
-        return list(map(util.rgb_to_hex, rgbs))
+        # PlotAlgoritmState().plot(self.problem_solver.clusters)
+        return list(centroid_colors)
