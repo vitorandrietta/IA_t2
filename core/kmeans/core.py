@@ -12,12 +12,10 @@ class Point:
     def __init__(self, coordinates):
         self.coordinates = coordinates
 
-
 class Cluster:
     def __init__(self, center, points):
         self.center = center
         self.points = points
-
 
 class BaseProblemSolver:
 
@@ -38,8 +36,8 @@ class BaseProblemSolver:
         pass
 
     def is_last_fit_calculation(self):
-        gen_clusters = self.formulate_new_clt_points()
         diff = 0
+        gen_clusters = self.formulate_new_clt_points()
         for i in range(self.n_cluster):
             if gen_clusters[i]:
                 previous = self.clusters[i]
@@ -48,10 +46,7 @@ class BaseProblemSolver:
                 self.clusters[i] = new
                 diff = max(diff, self.distance(previous.center, new.center))
 
-        if diff < self.min_diff:
-            return True
-
-        return False
+        return diff < self.min_diff
 
     def _get_image_data(self):
         img = Image.open(self.img_path)
@@ -63,11 +58,9 @@ class BaseProblemSolver:
         for count, color in img.getcolors(self.img_dim):
             image_points += count * [Point(color)]
         return image_points
-        # TODO IMPLEMENTAR AQUI, NAO DEVE MUDAR
 
     def get_colors(self):
         pass
-
 
 class EuclidianDistanceProblemSolver(BaseProblemSolver):
     def distance(self, p, q):
@@ -75,9 +68,6 @@ class EuclidianDistanceProblemSolver(BaseProblemSolver):
 
     def __init__(self, ncluster, img_path, mindif):
         super().__init__(ncluster, img_path, mindif)
-
-
-########## AI PRA FAZER AS COISAS VISUAIS, MUDAR OUTRO ARQUIVO #######
 
 class DefaultSolver(EuclidianDistanceProblemSolver):
     def __init__(self, ncluster, img_path, mindif):
@@ -104,7 +94,6 @@ class DefaultSolver(EuclidianDistanceProblemSolver):
 
     def is_fit_enough(self):
         pass
-
 
 class Runner:
     def __init__(self, ncluster, img_path, mindif):
